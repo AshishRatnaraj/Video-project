@@ -1,8 +1,6 @@
-package com.example.booktracker
+ package com.example.booktracker
 
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
+import android.inputmethodservice.Keyboard
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
@@ -10,27 +8,59 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
-import java.lang.reflect.Modifier
 import androidx.compose.ui.unit.sp
-
-
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScopeInstance.weight
+import.androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.RowScopeInstance.weight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.ui.Alignment
 
 @Composable
-fun Bookscreen() {
+fun Bookscreen()
+    LazyColumn(
+        contentPadding = Paddingvalues(
+            vertical = 8.dp,
+            horizontal = 6.dp
+        )
+        item(mockBookList[0]){book
+            BookItem(Book)
+        }
+        BookItem(book)
 
+    }
 }
-
-@Composable
+    @Composable
 fun BookItem(book:Book) {
     Card(
+
       elevation = 3.dp,
       modifier = Modifier
           .padding(8.dp)
     ){
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+            .padding(8.dp)
+        ){
+            BookIcon  (
+                Icons.Default.Check ,
+                Modifier.weight(0.15f)
+
+            )
+            BookDetails(
+                title =book.title,
+                author = book.author,
+                modifier = Modifier.weight(0.85f)
+            )
+    }
 
     }
 }
@@ -67,12 +97,13 @@ private fun bookDetails(title: String, author:String, modifier: Modifier) {
 @Composable
 private fun BookIcon(icon: ImageVector,modifier: Modifier) {
     Image(
-        ImageVector = icon,
-                ContentDescription = "Book Icon",
+        imageVector = icon,
+                contentDescription = "Book Icon",
                 modifier = Modifier
                 .padding(6.dp),
     )
 }
+
 
 
 
