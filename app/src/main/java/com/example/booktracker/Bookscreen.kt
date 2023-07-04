@@ -1,6 +1,6 @@
  package com.example.booktracker
 
-import android.inputmethodservice.Keyboard
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
@@ -15,28 +15,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScopeInstance.weight
-import.androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.layout.RowScopeInstance.weight
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.ui.Alignment
 
 @Composable
-fun Bookscreen()
-    LazyColumn(
-        contentPadding = Paddingvalues(
+fun BookScreen() {
+ LazyColumn(
+        contentPadding = PaddingValues(
             vertical = 8.dp,
             horizontal = 6.dp
         )
-        item(mockBookList[0]){book
-            BookItem(Book)
-        }
-        BookItem(book)
+ ) {
+     items(mockBookList) {book->
 
+         BookItem(book)
+     }
+ }
     }
-}
+
     @Composable
 fun BookItem(book:Book) {
     Card(
@@ -66,8 +67,8 @@ fun BookItem(book:Book) {
 }
 
 
-@Composable
-private fun bookDetails(title: String, author:String, modifier: Modifier) {
+ @Composable
+private fun BookDetails(title: String, author:String, modifier: Modifier) {
 
     Column(modifier = modifier)
     {
@@ -104,18 +105,16 @@ private fun BookIcon(icon: ImageVector,modifier: Modifier) {
     )
 }
 
-
-
-
-
-
 data class Book (
     val id: Int,
     val title: String,
     val author: String,
 )
 
-val mockBookList = listOf(
+
+
+
+ val mockBookList = listOf(
     Book(0,"The Fellowship of the Rings","J.R.R Tolkien"),
     Book(1,"The Two Towers","J.R.R Tolkien"),
     Book(2,"The Return of the Kings","J.R.R Tolkien" ),
