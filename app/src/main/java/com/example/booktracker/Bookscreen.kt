@@ -2,71 +2,95 @@
 
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.mediahome.books.BookItem
 
-@Composable
+ @Composable
+fun TextInput(){
+       val textInputState: MutableState<String> =remember{mutableStateOf("")}
+     TextField(
+         value= textInputState.value,
+         onValueChange = { newValue ->
+             textInputState.value = newValue
+         }
+           label = {
+               Text( "Input")
+         }
+     )
+
+   }
+ @Composable
 fun BookScreen() {
- LazyColumn(
-        contentPadding = PaddingValues(
-            vertical = 8.dp,
-            horizontal = 6.dp
-        )
- ) {
-     items(mockBookList) {book->
+     val viewModel: BookTrackerViewModel = viewModel()
+     val state:MutableState<List<Book>> = remember { mutableStateOf(viewModel.getBooks()) }
+     LazyColumn(
+         contentPadding = PaddingValues(
+             vertical = 8.dp,
+             horizontal = 6.dp
+         )
+     ) {
+         items(viewModel.state.value()) { book ->
+             BookItem(book{id ->
+                 viewmodel.toggle.finished(id)
+             }
+         }
+     }
 
-         BookItem(book)
+
+
+
+     @Composable
+     fun BookItem(
+         book: Book,
+         onClick: (id: Int) -> Unit
+
+     ) {
+
+         var readState by remember { mutableStateOf(false) }
+         val icon = if (book.finished) Icons.Default.Check else Icons.Default.Clear
+         Card(
+
+             elevation = 3.dp,
+             modifier = Modifier
+                 .padding(8.dp)
+         ) {
+             Row(
+                 verticalAlignment = Alignment.CenterVertically,
+                 modifier = Modifier
+                     .padding(8.dp)
+             ) {
+                 FinishedIcon(
+                     icon,
+                     Modifier
+                         .weight(0.15f)
+                 ){ onClick(book.id)}
+                 BookDetails(
+                     title = book.title,
+                     author = book.author,
+                     modifier = Modifier.weight(0.85f)
+                 )
+             }
+         }
      }
  }
-    }
-
-    @Composable
-fun BookItem(book:Book) {
-    Card(
-
-      elevation = 3.dp,
-      modifier = Modifier
-          .padding(8.dp)
-    ){
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-            .padding(8.dp)
-        ){
-            BookIcon  (
-                Icons.Default.Check ,
-                Modifier.weight(0.15f)
-
-            )
-            BookDetails(
-                title =book.title,
-                author = book.author,
-                modifier = Modifier.weight(0.85f)
-            )
-    }
-
-    }
-}
-
-
  @Composable
 private fun BookDetails(title: String, author:String, modifier: Modifier) {
 
@@ -96,22 +120,29 @@ private fun BookDetails(title: String, author:String, modifier: Modifier) {
     }
 }
 @Composable
-private fun BookIcon(icon: ImageVector,modifier: Modifier) {
-    Image(
+ private fun FinishedIcon(
+    icon: ImageVector,
+    modifier: Modifier,
+    onClick: () -> Unit
+){
+
+    Image (
         imageVector = icon,
-                contentDescription = "Book Icon",
-                modifier = Modifier
-                .padding(6.dp),
+        contentDescription = "Book Icon",
+        modifier = modifier
+            .padding(6.dp)
+            .clickable { onClick() }
+
+
     )
-}
+} 
 
 data class Book (
     val id: Int,
     val title: String,
     val author: String,
+    val Finished: Boolean = false
 )
-
-
 
 
  val mockBookList = listOf(
