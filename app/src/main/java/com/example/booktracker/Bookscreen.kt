@@ -30,9 +30,9 @@ fun TextInput(){
          value= textInputState.value,
          onValueChange = { newValue ->
              textInputState.value = newValue
-         }
-           label = {
-               Text( "Input")
+         },
+           label =  {
+             ( "Input")
          }
      )
 
@@ -47,18 +47,19 @@ fun BookScreen() {
              horizontal = 6.dp
          )
      ) {
-         items(viewModel.state.value()) { book ->
-             BookItem(book{id ->
-                 viewmodel.toggle.finished(id)
+         items(viewModel.state.value) { book ->
+             BookItem(book){id ->
+                 viewModel.toggleFinished(id)
              }
          }
      }
-
+ }
 
 
 
      @Composable
-     fun BookItem(
+     fun
+             BookItem(
          book: Book,
          onClick: (id: Int) -> Unit
 
@@ -90,7 +91,7 @@ fun BookScreen() {
              }
          }
      }
- }
+
  @Composable
 private fun BookDetails(title: String, author:String, modifier: Modifier) {
 
@@ -141,7 +142,7 @@ data class Book (
     val id: Int,
     val title: String,
     val author: String,
-    val Finished: Boolean = false
+    val finished: Boolean = false
 )
 
 
