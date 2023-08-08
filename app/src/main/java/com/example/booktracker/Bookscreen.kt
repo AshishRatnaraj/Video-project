@@ -22,14 +22,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.mediahome.books.BookItem
-
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 
  @Composable
 fun BookScreen() {
-     val viewModel: BookTrackerViewModel = viewModel()/
+     val viewModel: BookTrackerViewModel = viewModel()
      LaunchedEffect(key1 = "request_books",) {
-         viewModel().getBooks()
+         viewModel.getBooks()
      }
      LazyColumn(
          contentPadding = PaddingValues(
@@ -83,9 +83,16 @@ fun BookScreen() {
      }
 
  @Composable
-private fun BookDetails(title: String, author:String, modifier: Modifier) {
+fun BookDetails(title: String,
+                author:String,
+                modifier: Modifier,
+                horizontalAlignment: Alignment.Horizontal = Alignment.Start
+ ) {
 
-    Column(modifier = modifier)
+    Column(
+        modifier = modifier,
+        horizontalAlignment = horizontalAlignment
+    )
     {
         Text(
             text = title,
@@ -106,7 +113,7 @@ private fun BookDetails(title: String, author:String, modifier: Modifier) {
     }
 }
 @Composable
- private fun FinishedIcon(
+  fun FinishedIcon(
     icon: ImageVector,
     modifier: Modifier,
     onClick: () -> Unit

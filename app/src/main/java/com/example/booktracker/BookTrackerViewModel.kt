@@ -2,7 +2,9 @@ package com.example.booktracker
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -14,25 +16,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-@Composable
-fun BookScreen(){
-    val viewModel: BooksTrackerViewModel = viewModel()
 
-    LaucnchedEffect(Key1 = "request_Books") {
-        viewModel.getBooks()
-    }
-    LazyColumn(
-        contentPadding = PaddingValues(
-         vertical = 8.dp,
-         horizontal = 6.dp
-        )
-    ){
-        items(viewModel.state.value){
-        BookItem(book) { id ->
-            viewModel.toogleFinished(id)
-        }
-        }
-    }
+
 class BookTrackerViewModel():  ViewModel() {
      private var api: BooksApi
      private lateinit var booksCall: Call<List<Book>>
@@ -62,9 +47,9 @@ class BookTrackerViewModel():  ViewModel() {
             override fun onFailure(call: Call<List<Book>>,t:Throwable){
                 t.printStackTrace()
             }
-        }
-
-        override fun onCLeared() {
+        })
+    }
+        override fun onCleared() {
                   super.onCleared()
                   booksCall.cancel()
               }
@@ -74,9 +59,10 @@ class BookTrackerViewModel():  ViewModel() {
               fun toggleFinished(id: Int) {
                 val books = state.value.toMutableList()
                 val bookIndex = books.indexOfFirst {it.id==id }
-        val book = (books[bookIndex]).also {
+               val book = (books[bookIndex]).also {
             books[bookIndex] = it.copy( finished = !it.finished)
         }
         state.value = books
         }
+}
 
