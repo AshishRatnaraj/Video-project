@@ -8,6 +8,7 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -16,23 +17,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.w3c.dom.Text
 
 
 @Composable
 fun BookDetailsScreen(){
-    val viewModel:BookDetailsViewModel =ViewModel()
+    val viewModel:BookDetailsViewModel = viewModel()
     val book = viewModel.state.value
     if (book != null){
 
         Column(horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize().padding(16.dp)
         ){
-            val icon = if(book.finished) Icons.Default.Check else Icons.Default.Class
+            val icon = if(book.finished) Icons.Default.Check else Icons.Default.Clear
 
             FinishedIcon(
                 icon =icon,
-                modifier = Modifier.padding(top = 32.dp,bottom = 32),
+                modifier = Modifier.padding(top = 32.dp,bottom = 32.dp),
                 onClick = {}
             )
             BookDetails(

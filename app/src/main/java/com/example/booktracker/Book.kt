@@ -9,10 +9,12 @@ data class Book(
  val title: String,
  @SerializedName("r_author")
  val author: String,
+ @SerializedName("r_genre")
+ val genre: String,
  @SerializedName("series")
  val series: String,
  @SerializedName("r_finished")
- val finished: Boolean = false
+ var finished: Boolean = false
 )
 
 
