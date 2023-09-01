@@ -1,8 +1,10 @@
 package com.example.booktracker
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.Text
@@ -24,31 +26,57 @@ import org.w3c.dom.Text
 @Composable
 fun BookDetailsScreen(){
     val viewModel:BookDetailsViewModel = viewModel()
-    val book = viewModel.state.value
-    if (book != null){
+    val state = viewModel.state.value
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize().padding(16.dp)
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
         ){
-            val icon = if(book.finished) Icons.Default.Check else Icons.Default.Clear
+            if (state.book != null)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                val icon = if (state.book.finished) Icons.Default.Check else Icons.Default.Clear
 
-            FinishedIcon(
-                icon =icon,
-                modifier = Modifier.padding(top = 32.dp,bottom = 32.dp),
-                onClick = {}
-            )
-            BookDetails(
-                author = book.author,
-                title =book.title,
-                modifier = Modifier.padding(bottom = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            AdditionalDetails(
-                genre = book.genre,
-                series = book.series)
+                FinishedIcon(
+                    icon = icon,
+                    modifier = Modifier.padding(top = 32.dp, bottom = 32.dp),
+                    onClick = {}
+                )
+                BookDetails(
+                    author = state.book.author,
+                    title = state.book.title,
+                    modifier = Modifier.padding(bottom = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                AdditionalDetails(
+                    genre = state.book.genre,
+                    series = state.book.series
+                )
+            }
         }
+
     }
-        }
+    if(state.isLoading){
+        CircularProgressIndicator()
+}
+  if (state.error!=null){
+          Text(
+              text = state.error,
+              fonsize = 30.0
+          )
+}
+
+@Composable
+fun BookDetails(author: Any, title: Any, modifier: Modifier, horizontalAlignment: Alignment.Horizontal) {
+
+}
+
+}
 
 
 @Composable

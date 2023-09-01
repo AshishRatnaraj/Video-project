@@ -1,17 +1,13 @@
  package com.example.booktracker
 
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -22,46 +18,62 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.mediahome.books.BookItem
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 
  @Composable
-fun BookScreen() {
-     val viewModel: BookTrackerViewModel = viewModel()
-     LaunchedEffect(key1 = "request_books",) {
-         viewModel.getBooks()
-     }
-     LazyColumn(
-         contentPadding = PaddingValues(
-             vertical = 8.dp,
-             horizontal = 6.dp
-         )
-     ) {
-         items(viewModel.state.value) { book ->
-             BookItem(book){id ->
-                 viewModel.toggleFinished(id)
+ fun BooksScreen(onItemClick: (id:Int) -> Unit ={}) {
+     val  viewModel: BooksViewModel = viewModel()
+     val state =viewModel.state.value
+
+
+     )
+     Box (
+         contentAlignment = Alignment.Center,
+         modifier = Modifier.fillMaxSize()
+     ){
+         LazyColumn(
+             contentPadding = PaddingValues(
+                 vertical = 8.dp,
+                 horizontal = 6.dp
+             )
+         ) {
+             items(state.books) { book ->
+                 BookItem(
+                     book,
+                     onFinishedClick = {id -> viewModel.toggleFinished(id)},
+                     onItemClick = {id -> onItemClick(id)}
+                 )
+
              }
          }
+        if(state.isLoading){
+            CircularProgressIndicator()
+      }
+      if(state.error !=null){
+           Text(
+               text= state.error,
+               fontSize = 30.sp,
+
+      }
+
      }
- }
+
 
 
 
      @Composable
-     fun
-             BookItem(
+     fun BookItem(
          book: Book,
-         onClick: (id: Int) -> Unit
-
+         onFinishedClick: (id: Int) -> Unit,
+         onItemClick: (id: Int) -> Unit
      ) {
-                              
-
          val icon = if (book.finished) Icons.Default.Check else Icons.Default.Clear
          Card(
 
              elevation = 3.dp,
              modifier = Modifier
                  .padding(8.dp)
+                 .clickable { onItemClick(book.id) }
          ) {
              Row(
                verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +84,7 @@ fun BookScreen() {
                      icon,
                      Modifier
                          .weight(0.15f)
-                 ){ onClick(book.id)}
+                 ){ onFinishedClick(book.id)}
                  BookDetails(
                      title = book.title,
                      author = book.author,
@@ -86,7 +98,7 @@ fun BookScreen() {
 fun BookDetails(title: String,
                 author:String,
                 modifier: Modifier,
-                horizontalAlignment: Alignment.Horizontal = Alignment.Start
+                 horizontalAlignment: Alignment.Horizontal = Alignment.Start
  ) {
 
     Column(
