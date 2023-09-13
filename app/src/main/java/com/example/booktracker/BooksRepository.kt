@@ -21,7 +21,7 @@ class BooksRepository {
         .create(BooksApi::class.java)
     private var booksDao = BooksDb.getDaoInstance(BookApplication.getAppContext())
 
-     suspend fun getAllBooks(): List<Book> {
+     suspend fun loadBooks() {
         return withContext(Dispatchers.IO) {
             try {
                  refreshCache()
@@ -39,29 +39,39 @@ class BooksRepository {
                     }else -> throw e
                 }
             }
-            return@withContext booksDao.getAll()
+
         }
     }
+
+     suspend fun getCachedBooks():List<Book>{
+         return withContext(Dispatchers.IO){
+             return@withContext booksDao.getAll().toBookList()
+
+
+
+
+         }
+     }
 
     private suspend fun refreshCache() {
         val remoteBooks = api.getBooks()
         val finishedBooks = booksDao.getAllFinished()
-        booksDao.addAll(remoteBooks)
+        booksDao.addAll(remoteBooks.toLocalBookList())
         booksDao.updateAll(
             finishedBooks.map{
-                PartialBook_finished(it.id,true)
+                PartialBookLocal_finished(it.id,true)
             }
         )
     }
-     suspend fun toggleFinishedDb(id: Int, oldValue: Boolean) =
+     suspend fun toggleFinishedDb(id: Int, value: Boolean) =
         withContext(Dispatchers.IO) {
             booksDao.update(
-                PartialBook_finished(
+                PartialBookLocal_finished(
                     id = id,
-                    finished = !oldValue
+                    finished = value
                 )
             )
-            booksDao.getAll()
+            booksDao.getAll().sortedBy{it. title}
         }
 }
 

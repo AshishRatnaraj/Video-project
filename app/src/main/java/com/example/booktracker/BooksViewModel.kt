@@ -2,15 +2,16 @@ package com.example.booktracker
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 
 
-class BooksViewModel():  ViewModel() {
- private val repo = BooksRepository()
+class BooksViewModel():  ViewModel(){
+    private val toggleFinishedUseCase =ToggleFinishedUseCase()
+    private val getBooksUseCase = GetInitialBookListFromNetUserCase()
+
 
 val state: State<BooksScreenState>
   get()= _state
@@ -30,16 +31,13 @@ val state: State<BooksScreenState>
         )
     }
 
-
     init {
-
-        getBooks()
+     getBooks()
     }
 
-
-    private fun getBooks() {
+      private fun getBooks() {
         viewModelScope.launch(errorHandler) {
-            val books = repo.getAllBooks()
+            val books = getBooksUseCase()
             _state.value = _state.value.copy(
                 books = books,
                 isLoading = false
@@ -47,18 +45,15 @@ val state: State<BooksScreenState>
         }
     }
 
-
     fun toggleFinished(id: Int) {
         val books = _state.value.books.toMutableList()
         val bookIndex = books.indexOfFirst { it.id == id }
         val book = books[bookIndex]
-            books[bookIndex] = book.copy(finished = !book.finished)
             viewModelScope.launch {
-                val updatedBooks = repo.toggleFinishedDb(id, book.finished)
+                val updatedBooks = toggleFinishedUseCase(id, book.finished)
                 _state.value = _state.value.copy(books = updatedBooks)
             }
         }
-
-    }
+}
 
 

@@ -24,21 +24,13 @@ class BookDetailsRepository {
         val mapWrapper = api.getBook(id)
         val remoteBook = mapWrapper.values.first()
         val bookFinished = booksDao.getBook(id).finished
-        booksDao.add(remoteBook)
+        booksDao.add(remoteBook.toLocalBook())
         if (bookFinished) {
-            val partialBook = PartialBook_finished(id, true)
+            val partialBook = PartialBookLocal_finished(id, true)
             booksDao.update(partialBook)
         }
     }
 
-    private suspend fun getRemoteBook(id: Int): Book {
-        return withContext(Dispatchers.IO) {
-            val mapwrapper = api.getBook(id)
-            return@withContext mapwrapper.values.first(
-
-            )
-        }
-    }
 
     suspend fun getSingleBook(id: Int):Book {
         return withContext(Dispatchers.IO) {
@@ -50,13 +42,15 @@ class BookDetailsRepository {
                     is ConnectException,
                     is HttpException -> {
                         Log.e("BooksViewModel", "Error: No data to display")
-                        return@withContext booksDao.getBook(id)
+                        return@withContext booksDao.getBook(id).toBook()
                     }
                     else -> throw e
                 }
+
             }
-            return@withContext booksDao.getBook(id)
+
+            return@withContext booksDao.getBook(id).toBook()
         }
+    }
 
     }
-}
